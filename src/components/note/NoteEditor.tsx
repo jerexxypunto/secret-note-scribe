@@ -1,9 +1,9 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { EncryptionMethod } from "@/utils/encryption";
+import { EncryptionMethod, encryptText } from "@/utils/encryption";
 
 interface NoteEditorProps {
   content: string;
@@ -24,6 +24,30 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
   password,
   setPassword
 }) => {
+  const [previewEncrypted, setPreviewEncrypted] = useState<string>('');
+  
+  // Update the preview when content, encryption method or password changes
+  useEffect(() => {
+    if (encryptionMethod !== 'none') {
+      // For Atbash, we don't need a password
+      const effectivePassword = encryptionMethod === 'Atbash' ? '' : password;
+      // Only show preview if there's content to encrypt
+      if (content) {
+        try {
+          const encrypted = encryptText(content, encryptionMethod, effectivePassword);
+          setPreviewEncrypted(encrypted);
+        } catch (error) {
+          console.error('Preview encryption error:', error);
+          setPreviewEncrypted('Error generating preview');
+        }
+      } else {
+        setPreviewEncrypted('');
+      }
+    } else {
+      setPreviewEncrypted('');
+    }
+  }, [content, encryptionMethod, password]);
+
   return (
     <div className="space-y-3">
       <Textarea
@@ -58,6 +82,13 @@ const NoteEditor: React.FC<NoteEditorProps> = ({
             onChange={(e) => setPassword(e.target.value)}
             className="focus-visible:ring-orange"
           />
+        )}
+        
+        {encryptionMethod !== 'none' && previewEncrypted && (
+          <div className="p-3 bg-muted/40 rounded border border-orange/20">
+            <p className="text-xs text-muted-foreground mb-1">Encrypted preview:</p>
+            <p className="text-sm font-mono break-words">{previewEncrypted}</p>
+          </div>
         )}
       </div>
     </div>
