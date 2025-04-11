@@ -33,7 +33,8 @@ const Note: React.FC<NoteProps> = ({ note, onDelete, onUpdate }) => {
   const { toast } = useToast();
 
   const handleSave = () => {
-    if (encryptionMethod !== 'none' && !password) {
+    // For Atbash cipher, we don't need a password
+    if (encryptionMethod !== 'none' && encryptionMethod !== 'Atbash' && !password) {
       toast({
         title: "Password required",
         description: "Please enter a password to encrypt your note",
@@ -69,7 +70,8 @@ const Note: React.FC<NoteProps> = ({ note, onDelete, onUpdate }) => {
   };
 
   const handleDecrypt = () => {
-    if (!password) {
+    // For Atbash, we don't need a password
+    if (note.encryptionMethod !== 'Atbash' && !password) {
       toast({
         title: "Password required",
         description: "Please enter the password to decrypt this note",
@@ -105,7 +107,8 @@ const Note: React.FC<NoteProps> = ({ note, onDelete, onUpdate }) => {
 
   const handleEncryptionChange = (value: string) => {
     setEncryptionMethod(value as EncryptionMethod);
-    setShowPasswordInput(value !== 'none');
+    // Only show password input for methods other than 'none' and 'Atbash'
+    setShowPasswordInput(value !== 'none' && value !== 'Atbash');
   };
 
   return (
@@ -156,6 +159,7 @@ const Note: React.FC<NoteProps> = ({ note, onDelete, onUpdate }) => {
                   <SelectItem value="AES">AES</SelectItem>
                   <SelectItem value="DES">DES</SelectItem>
                   <SelectItem value="RC4">RC4</SelectItem>
+                  <SelectItem value="Atbash">Atbash</SelectItem>
                 </SelectContent>
               </Select>
               
@@ -173,15 +177,20 @@ const Note: React.FC<NoteProps> = ({ note, onDelete, onUpdate }) => {
         ) : note.encryptionMethod !== 'none' && !isDecrypted ? (
           <div className="space-y-3">
             <div className="p-3 bg-muted/40 rounded text-muted-foreground text-sm">
-              This note is encrypted. Enter the password to decrypt.
+              This note is encrypted
+              {note.encryptionMethod !== 'Atbash' ? 
+                ". Enter the password to decrypt." : 
+                " with Atbash cipher."}
             </div>
-            <Input
-              type="password"
-              placeholder="Enter decryption password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="focus-visible:ring-orange"
-            />
+            {note.encryptionMethod !== 'Atbash' && (
+              <Input
+                type="password"
+                placeholder="Enter decryption password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="focus-visible:ring-orange"
+              />
+            )}
             <Button 
               onClick={handleDecrypt}
               variant="outline" 
