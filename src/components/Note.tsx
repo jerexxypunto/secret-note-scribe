@@ -103,6 +103,7 @@ const Note: React.FC<NoteProps> = ({ note, onDelete, onUpdate }) => {
             password={password}
             setPassword={setPassword}
             onDecrypt={handleDecryptNote}
+            encryptedContent={note.content}
           />
         ) : (
           <div className="prose-sm break-words">

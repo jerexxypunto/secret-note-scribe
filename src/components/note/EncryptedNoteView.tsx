@@ -9,13 +9,15 @@ interface EncryptedNoteViewProps {
   password: string;
   setPassword: (password: string) => void;
   onDecrypt: () => void;
+  encryptedContent?: string;
 }
 
 const EncryptedNoteView: React.FC<EncryptedNoteViewProps> = ({
   encryptionMethod,
   password,
   setPassword,
-  onDecrypt
+  onDecrypt,
+  encryptedContent
 }) => {
   return (
     <div className="space-y-3">
@@ -25,6 +27,13 @@ const EncryptedNoteView: React.FC<EncryptedNoteViewProps> = ({
           ". Enter the password to decrypt." : 
           " with Atbash cipher."}
       </div>
+      
+      {encryptionMethod === 'Atbash' && encryptedContent && (
+        <div className="p-3 bg-orange/10 rounded border border-orange/20">
+          <p className="text-sm font-mono break-words">{encryptedContent}</p>
+        </div>
+      )}
+      
       {encryptionMethod !== 'Atbash' && (
         <Input
           type="password"
