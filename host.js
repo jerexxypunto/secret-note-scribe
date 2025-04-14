@@ -1,6 +1,6 @@
 
 const redirectUrl = {
-    'app': '/dist/',
+    'app': 'dist/',
 };
 
 const relateivePath = [
