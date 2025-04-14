@@ -24,7 +24,7 @@ function redriectTo( path ){
 
     if (path_compare( path )) {
         // Redirect to the app page
-        location.href = redirectUrl.app;
+        location.href = path + redirectUrl.app;
     }
 }
 
