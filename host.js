@@ -3,7 +3,11 @@ const redirectUrl = {
     'app': '/dist/',
 };
 
-function redriectTo(){
+const relateivePath = [
+    '/secret-note-scribe/'
+];
+
+function redriectTo( path ){
 
     function path_compare( route ){
 
@@ -18,10 +22,10 @@ function redriectTo(){
 
     }
 
-    if (path_compare( '/secret-note-scribe/' )) {
+    if (path_compare( path )) {
         // Redirect to the app page
         location.href = redirectUrl.app;
     }
 }
 
-redriectTo();
+relateivePath.forEach( path => redriectTo(path) );
